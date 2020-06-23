@@ -41,12 +41,12 @@ puts $recvr_delay2;
 # TODO: make these delays random
 #Create links between the nodes
 $ns duplex-link $N(1) $N(3) 100Mb 5ms DropTail
-$ns duplex-link $N(2) $N(3) 100Mb $recvr_delay1 DropTail
+$ns duplex-link $N(2) $N(3) 100Mb 6 DropTail
 
 $ns duplex-link $N(3) $N(4) 100Kb 1ms DropTail
 
 $ns duplex-link $N(4) $N(5) 100Mb 5ms DropTail
-$ns duplex-link $N(4) $N(6) 100Mb $recvr_delay2 DropTail
+$ns duplex-link $N(4) $N(6) 100Mb 6 DropTail
 
 # The queue size at $R is to be 7, including the packet being sent
 # $ns queue-limit $R $B 10
