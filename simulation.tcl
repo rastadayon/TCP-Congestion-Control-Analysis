@@ -29,13 +29,14 @@ for {set i 1} {$i < 7} {incr i} {
 # $ns duplex-link $A $R 10Mb 10ms DropTail
 # $ns duplex-link $R $B 800Kb 50ms DropTail
 
-set recvr_delay1 [new RandomVariable/Uniform];
-$recvr_delay1 set min_ 5ms
-$recvr_delay1 set max_ 25ms
+# set value [expr int([expr rand() * 100])]
+set recvr_delay1 [expr int([expr rand() * 20])];
+set recvr_delay1 [expr $recvr_delay1 + 5];
+set recvr_delay2 [expr int([expr rand() * 20])];
+set recvr_delay2 [expr $recvr_delay2 + 5];
 
-set recvr_delay2 [new RandomVariable/Uniform];
-$recvr_delay2 set min_ 5ms
-$recvr_delay2 set max_ 25ms
+puts $recvr_delay1;
+puts $recvr_delay2;
 
 # TODO: make these delays random
 #Create links between the nodes
