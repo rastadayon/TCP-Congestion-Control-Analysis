@@ -18,9 +18,6 @@ proc finish {} {
 }
 
 #Create the network nodes
-# set A [$ns node]
-# set R [$ns node]
-# set B [$ns node]
 
 for {set i 0} {$i < 6} {incr i} {   
      set N($i) [$ns node]       
