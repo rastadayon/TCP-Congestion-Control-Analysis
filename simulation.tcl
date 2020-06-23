@@ -103,6 +103,10 @@ $ns connect $tcp1 $end1
 $ns connect $tcp2 $end2
 
 #Schedule the connection data flow; start sending data at T=0, stop at T=10.0
+
+$tcp1 set _ttl 64
+$tcp2 set _ttl 64
+
 set myftp1 [new Application/FTP]
 $myftp1 attach-agent $tcp1
 set myftp2 [new Application/FTP]
