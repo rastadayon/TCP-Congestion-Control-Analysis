@@ -19,7 +19,7 @@ proc finish {} {
 
 #Create the network nodes
 
-for {set i 1} {$i < 7} {incr i} {   
+for {set i 0} {$i < 6} {incr i} {   
      set N($i) [$ns node]       
 }
 #N3 and N4 are routers
@@ -40,32 +40,32 @@ puts $recvr_delay2;
 
 # TODO: make these delays random
 #Create links between the nodes
-$ns duplex-link $N(1) $N(3) 100Mb 5ms DropTail
-$ns duplex-link $N(2) $N(3) 100Mb 6 DropTail
+$ns duplex-link $N(0) $N(2) 100Mb 5ms DropTail
+$ns duplex-link $N(1) $N(2) 100Mb $recvr_delay1 DropTail
 
-$ns duplex-link $N(3) $N(4) 100Kb 1ms DropTail
+$ns duplex-link $N(2) $N(3) 100Kb 1ms DropTail
 
-$ns duplex-link $N(4) $N(5) 100Mb 5ms DropTail
-$ns duplex-link $N(4) $N(6) 100Mb 6 DropTail
+$ns duplex-link $N(3) $N(4) 100Mb 5ms DropTail
+$ns duplex-link $N(3) $N(5) 100Mb $recvr_delay2 DropTail
 
 # The queue size at $R is to be 7, including the packet being sent
 # $ns queue-limit $R $B 10
+$ns queue-limit $N(2) $N(3) 10
 $ns queue-limit $N(3) $N(4) 10
-$ns queue-limit $N(4) $N(5) 10
-$ns queue-limit $N(4) $N(6) 10
+$ns queue-limit $N(3) $N(5) 10
 
 
-# some hints for nam
-# color packets of flow 0 red
-$ns color 0 Red
-$ns duplex-link-op $N(1) $N(3) orient right
-$ns duplex-link-op $N(2) $N(3) orient up
-$ns duplex-link-op $N(4) $N(5) orient left
-$ns duplex-link-op $N(4) $N(6) orient down
-$ns duplex-link-op $N(3) $N(4) orient right
-$ns duplex-link-op $N(4) $N(5) queuePos 0.5
-$ns duplex-link-op $N(4) $N(6) queuePos 0.5
-$ns duplex-link-op $N(3) $N(4) queuePos 0.5
+# # some hints for nam
+# # color packets of flow 0 red
+# $ns color 0 Red
+# $ns duplex-link-op $N(0) $N(2) orient right
+# $ns duplex-link-op $N(1) $N(2) orient up
+# $ns duplex-link-op $N(3) $N(4) orient left
+# $ns duplex-link-op $N(3) $N(5) orient down
+# $ns duplex-link-op $N(2) $N(3) orient right
+# $ns duplex-link-op $N(3) $N(4) queuePos 0.5
+# $ns duplex-link-op $N(3) $N(5) queuePos 0.5
+# $ns duplex-link-op $N(2) $N(3) queuePos 0.5
 
 # Create a TCP sending agent and attach it to A
 # set tcp0 [new Agent/TCP/Reno]
@@ -76,8 +76,8 @@ set tcp2 [new Agent/TCP/Reno]
 # $tcp0 set class_ 0
 $tcp1 set packetSize_ 960
 $tcp2 set packetSize_ 960
-$ns attach-agent $N(1) $tcp1
-$ns attach-agent $N(2) $tcp2
+$ns attach-agent $N(0) $tcp1
+$ns attach-agent $N(1) $tcp2
 
 # Let's trace some variables
 $tcp1 attach $tracefile
@@ -94,9 +94,9 @@ $tcp2 tracevar maxseq_
 
 #Create a TCP receive agent (a traffic sink) and attach it to B
 set end1 [new Agent/TCPSink]
-$ns attach-agent $N(5) $end1
+$ns attach-agent $N(4) $end1
 set end2 [new Agent/TCPSink]
-$ns attach-agent $N(6) $end2
+$ns attach-agent $N(5) $end2
 
 #Connect the traffic source with the traffic sink
 $ns connect $tcp1 $end1
