@@ -61,12 +61,14 @@ $tcp1 tracevar cwnd_
 $tcp1 tracevar ssthresh_
 $tcp1 tracevar ack_
 $tcp1 tracevar maxseq_
+$tcp1 tracevar rtt_
 
 $tcp2 attach $tracefile
 $tcp2 tracevar cwnd_
 $tcp2 tracevar ssthresh_
 $tcp2 tracevar ack_
 $tcp2 tracevar maxseq_
+$tcp2 tracevar rtt_
 
 #Create a TCP receive agent (a traffic sink) and attach it
 set end1 [new Agent/TCPSink]
@@ -98,7 +100,7 @@ set myftp2 [new Application/FTP]
 $myftp2 attach-agent $tcp2
 $ns at 0.0 "$myftp1 start"
 $ns at 0.0 "$myftp2 start"
-$ns at 100.0 "finish"
+$ns at 1000.0 "finish"
 
 #Run the simulation
 set fp [open cwnd w+]
