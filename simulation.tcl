@@ -3,33 +3,23 @@
 set ns [new Simulator]
 
 #Open the nam file basic1.nam and the variable-trace file basic1.tr
-set namfile [open basic1.nam w]
-$ns namtrace-all $namfile
-set tracefile [open basic1.tr w]
+set tracefile [open trace.tr w]
 $ns trace-all $tracefile
 
 #Define a 'finish' procedure
 proc finish {} {
         global ns namfile tracefile
         $ns flush-trace
-        close $namfile
         close $tracefile
         exit 0
 }
 
 #Create the network nodes
-
+#N3 and N4 are routers
 for {set i 0} {$i < 6} {incr i} {   
      set N($i) [$ns node]       
 }
-#N3 and N4 are routers
 
-#Create a duplex link between the nodes
-
-# $ns duplex-link $A $R 10Mb 10ms DropTail
-# $ns duplex-link $R $B 800Kb 50ms DropTail
-
-# set value [expr int([expr rand() * 100])]
 set recvr_delay1 [expr int([expr rand() * 20])];
 set recvr_delay1 [expr $recvr_delay1 + 5];
 set recvr_delay2 [expr int([expr rand() * 20])];
@@ -38,7 +28,6 @@ set recvr_delay2 [expr $recvr_delay2 + 5];
 puts $recvr_delay1;
 puts $recvr_delay2;
 
-# TODO: make these delays random
 #Create links between the nodes
 $ns duplex-link $N(0) $N(2) 100Mb 5ms DropTail
 $ns duplex-link $N(1) $N(2) 100Mb $recvr_delay1 DropTail
@@ -48,32 +37,16 @@ $ns duplex-link $N(2) $N(3) 100Kb 1ms DropTail
 $ns duplex-link $N(3) $N(4) 100Mb 5ms DropTail
 $ns duplex-link $N(3) $N(5) 100Mb $recvr_delay2 DropTail
 
-# The queue size at $R is to be 7, including the packet being sent
-# $ns queue-limit $R $B 10
+# The queue size
 $ns queue-limit $N(2) $N(3) 10
 $ns queue-limit $N(3) $N(4) 10
 $ns queue-limit $N(3) $N(5) 10
 
+# Create a TCP sending agent and attach it
+set tcp1 [new Agent/TCP/Newreno]
+set tcp2 [new Agent/TCP/Newreno]
 
-# # some hints for nam
-# # color packets of flow 0 red
-# $ns color 0 Red
-# $ns duplex-link-op $N(0) $N(2) orient right
-# $ns duplex-link-op $N(1) $N(2) orient up
-# $ns duplex-link-op $N(3) $N(4) orient left
-# $ns duplex-link-op $N(3) $N(5) orient down
-# $ns duplex-link-op $N(2) $N(3) orient right
-# $ns duplex-link-op $N(3) $N(4) queuePos 0.5
-# $ns duplex-link-op $N(3) $N(5) queuePos 0.5
-# $ns duplex-link-op $N(2) $N(3) queuePos 0.5
-
-# Create a TCP sending agent and attach it to A
-# set tcp0 [new Agent/TCP/Reno]
-set tcp1 [new Agent/TCP/Reno]
-set tcp2 [new Agent/TCP/Reno]
-
-# We make our one-and1-only flow be flow 0
-# $tcp0 set class_ 0
+# Attaching nodes
 $tcp1 set packetSize_ 960
 $tcp2 set packetSize_ 960
 $ns attach-agent $N(0) $tcp1
@@ -92,7 +65,7 @@ $tcp2 tracevar ssthresh_
 $tcp2 tracevar ack_
 $tcp2 tracevar maxseq_
 
-#Create a TCP receive agent (a traffic sink) and attach it to B
+#Create a TCP receive agent (a traffic sink) and attach it
 set end1 [new Agent/TCPSink]
 $ns attach-agent $N(4) $end1
 set end2 [new Agent/TCPSink]
@@ -102,13 +75,11 @@ $ns attach-agent $N(5) $end2
 $ns connect $tcp1 $end1
 $ns connect $tcp2 $end2
 
-#Schedule the connection data flow; start sending data at T=0, stop at T=10.0
-
-$tcp1 set _ttl 64
-$tcp2 set _ttl 64
+#Set TTL
+$tcp1 set ttl_ 64
+$tcp2 set ttl_ 64
 
 proc save_cwnd { filename source1 source2 } {
-        puts "hello bitch"
         global ns
         set time [$ns now]
         set cwnd1 [$source1 set cwnd_]
@@ -124,7 +95,7 @@ set myftp2 [new Application/FTP]
 $myftp2 attach-agent $tcp2
 $ns at 0.0 "$myftp1 start"
 $ns at 0.0 "$myftp2 start"
-$ns at 1000.0 "finish"
+$ns at 100.0 "finish"
 
 #Run the simulation
 set fp [open cwnd w+]
