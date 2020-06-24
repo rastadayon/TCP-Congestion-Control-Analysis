@@ -115,7 +115,7 @@ proc save_cwnd { filename source1 source2 } {
         set cwnd2 [$source2 set cwnd_]
         puts $filename "$time $cwnd1 $cwnd2"
 
-        $ns at [expr $time+0.05] "save_cwnd $filename $source1 $source2"
+        $ns at [expr $time+0.1] "save_cwnd $filename $source1 $source2"
 }
 
 set myftp1 [new Application/FTP]
