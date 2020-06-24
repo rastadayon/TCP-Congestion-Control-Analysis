@@ -20,22 +20,25 @@ for {set i 0} {$i < 6} {incr i} {
      set N($i) [$ns node]       
 }
 
-set recvr_delay1 [expr int([expr rand() * 20])];
-set recvr_delay1 [expr $recvr_delay1 + 5];
-set recvr_delay2 [expr int([expr rand() * 20])];
-set recvr_delay2 [expr $recvr_delay2 + 5];
+proc rand {} {
+        set recvr_delay [expr int([expr rand() * 20])];
+        set recvr_delay [expr $recvr_delay + 5];
+        return $recvr_delay;
+}
+# set recvr_delay2 [expr int([expr rand() * 20])];
+# set recvr_delay2 [expr $recvr_delay2 + 5];
 
-puts $recvr_delay1;
-puts $recvr_delay2;
+# puts $recvr_delay1;
+# puts $recvr_delay2;
 
 #Create links between the nodes
 $ns duplex-link $N(0) $N(2) 100Mb 5ms DropTail
-$ns duplex-link $N(1) $N(2) 100Mb $recvr_delay1 DropTail
+$ns duplex-link $N(1) $N(2) 100Mb [rand]ms DropTail
 
 $ns duplex-link $N(2) $N(3) 100Kb 1ms DropTail
 
 $ns duplex-link $N(3) $N(4) 100Mb 5ms DropTail
-$ns duplex-link $N(3) $N(5) 100Mb $recvr_delay2 DropTail
+$ns duplex-link $N(3) $N(5) 100Mb [rand]ms DropTail
 
 # The queue size
 $ns queue-limit $N(2) $N(3) 10
