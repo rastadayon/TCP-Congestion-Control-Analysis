@@ -61,12 +61,14 @@ $tcp1 tracevar cwnd_
 $tcp1 tracevar ssthresh_
 $tcp1 tracevar ack_
 $tcp1 tracevar maxseq_
+$tcp1 tracevar rtt_
 
 $tcp2 attach $tracefile
 $tcp2 tracevar cwnd_
 $tcp2 tracevar ssthresh_
 $tcp2 tracevar ack_
 $tcp2 tracevar maxseq_
+$tcp2 tracevar rtt_
 
 #Create a TCP receive agent (a traffic sink) and attach it
 set end1 [new Agent/TCPSink]
@@ -82,6 +84,10 @@ $ns connect $tcp2 $end2
 $tcp1 set ttl_ 64
 $tcp2 set ttl_ 64
 
+#Set Fid
+$tcp1 set fid_ 0
+$tcp2 set fid_ 1
+
 proc save_cwnd { filename source1 source2 } {
         global ns
         set time [$ns now]
@@ -90,6 +96,16 @@ proc save_cwnd { filename source1 source2 } {
         puts $filename "$time $cwnd1 $cwnd2"
 
         $ns at [expr $time+0.1] "save_cwnd $filename $source1 $source2"
+}
+
+proc save_rtt { filename source1 source2 } {
+        global ns
+        set time [$ns now]
+        set rtt1 [$source1 set rtt_]
+        set rtt2 [$source2 set rtt_]
+        puts $filename "$time $rtt1 $rtt2"
+
+        $ns at [expr $time+0.1] "save_rtt $filename $source1 $source2"
 }
 
 set myftp1 [new Application/FTP]
@@ -103,4 +119,8 @@ $ns at 100.0 "finish"
 #Run the simulation
 set fp [open cwnd w+]
 save_cwnd $fp $tcp1 $tcp2
+
+set rttfile [open rtt w+]
+save_rtt $rttfile $tcp1 $tcp2
+
 $ns run
