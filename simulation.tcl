@@ -107,6 +107,17 @@ $ns connect $tcp2 $end2
 $tcp1 set _ttl 64
 $tcp2 set _ttl 64
 
+proc save_cwnd { filename source1 source2 } {
+        puts "hello bitch"
+        global ns
+        set time [$ns now]
+        set cwnd1 [$source1 set cwnd_]
+        set cwnd2 [$source2 set cwnd_]
+        puts $filename "$time $cwnd1 $cwnd2"
+
+        $ns at [expr $time+0.05] "save_cwnd $filename $source1 $source2"
+}
+
 set myftp1 [new Application/FTP]
 $myftp1 attach-agent $tcp1
 set myftp2 [new Application/FTP]
@@ -116,4 +127,6 @@ $ns at 0.0 "$myftp2 start"
 $ns at 1000.0 "finish"
 
 #Run the simulation
+set fp [open cwnd w+]
+save_cwnd $fp $tcp1 $tcp2
 $ns run
