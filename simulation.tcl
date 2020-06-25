@@ -114,7 +114,7 @@ set myftp2 [new Application/FTP]
 $myftp2 attach-agent $tcp2
 $ns at 0.0 "$myftp1 start"
 $ns at 0.0 "$myftp2 start"
-$ns at 100.0 "finish"
+$ns at 1000.0 "finish"
 
 #Run the simulation
 set fp [open cwnd w+]
