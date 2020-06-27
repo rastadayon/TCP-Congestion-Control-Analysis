@@ -44,6 +44,10 @@ $ns duplex-link $N(3) $N(5) 100Mb [rand]ms DropTail
 $ns queue-limit $N(2) $N(3) 10
 $ns queue-limit $N(3) $N(4) 10
 $ns queue-limit $N(3) $N(5) 10
+$ns queue-limit $N(3) $N(2) 10
+$ns queue-limit $N(2) $N(0) 10
+$ns queue-limit $N(2) $N(1) 10
+
 
 # Create a TCP sending agent and attach it
 set tcp1 [new Agent/TCP/Newreno]
@@ -95,7 +99,7 @@ proc save_cwnd { filename source1 source2 } {
         set cwnd2 [$source2 set cwnd_]
         puts $filename "$time $cwnd1 $cwnd2"
 
-        $ns at [expr $time+0.1] "save_cwnd $filename $source1 $source2"
+        $ns at [expr $time+1] "save_cwnd $filename $source1 $source2"
 }
 
 proc save_rtt { filename source1 source2 } {
@@ -105,7 +109,7 @@ proc save_rtt { filename source1 source2 } {
         set rtt2 [$source2 set rtt_]
         puts $filename "$time $rtt1 $rtt2"
 
-        $ns at [expr $time+0.1] "save_rtt $filename $source1 $source2"
+        $ns at [expr $time+1] "save_rtt $filename $source1 $source2"
 }
 
 set myftp1 [new Application/FTP]
